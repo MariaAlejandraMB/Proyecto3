@@ -17,20 +17,20 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
     st.success("✅ Archivo cargado correctamente.")
     
-    st.subheader("👁️ Vista previa")
+    st.subheader("Vista previa")
     st.dataframe(df.head())
 
     # Paso 1: Estadística Descriptiva
-    st.markdown("### 📊 Estadística descriptiva")
+    st.markdown("### Estadística descriptiva")
     st.dataframe(df.describe())
 
     # Paso 2: Valores nulos
-    st.markdown("### 🔍 Valores nulos por columna")
+    st.markdown("### Valores nulos por columna")
     nulls = df.isnull().sum()
     st.dataframe(nulls[nulls > 0])
 
     # Imputación
-    st.markdown("### 🧼 Imputación de valores nulos")
+    st.markdown("### Imputación de valores nulos")
     cols_with_nulls = df.columns[df.isnull().sum() > 0].tolist()
     for col in cols_with_nulls:
         method = st.selectbox(f"Imputar '{col}' con:", ["No imputar", "Media", "Mediana", "Moda"], key=col)
@@ -42,7 +42,7 @@ if uploaded_file:
             df[col].fillna(df[col].mode()[0], inplace=True)
 
     # Paso 3: Outliers
-    st.markdown("### 📦 Outliers (IQR)")
+    st.markdown("### Outliers (IQR)")
     outlier_data = []
     for col in df.select_dtypes(include=['float64', 'int64']):
         Q1 = df[col].quantile(0.25)
@@ -53,7 +53,7 @@ if uploaded_file:
     st.dataframe(pd.DataFrame(outlier_data))
 
     # Boxplots
-    st.markdown("### 📈 Boxplots de variables numéricas")
+    st.markdown("### Boxplots de variables numéricas")
     box_cols = st.multiselect("Selecciona columnas para boxplot", df.select_dtypes(include=['float64', 'int64']).columns)
     for col in box_cols:
         fig, ax = plt.subplots()
@@ -61,7 +61,7 @@ if uploaded_file:
         st.pyplot(fig)
 
     # Transformaciones
-    st.markdown("### 🔁 Transformaciones")
+    st.markdown("### Transformaciones")
     transform_cols = st.multiselect("Selecciona columnas a transformar (log/sqrt)", df.select_dtypes(include=['float64', 'int64']).columns)
     tipo = st.radio("Tipo de transformación:", ["Ninguna", "Log", "Raíz cuadrada", "Ambas"])
     if tipo != "Ninguna":
@@ -73,7 +73,7 @@ if uploaded_file:
         st.success("✔️ Transformaciones aplicadas.")
 
     # Ingeniería de características
-    st.markdown("### 🛠 Ingeniería de características")
+    st.markdown("### Ingeniería de características")
     nueva_var = st.text_input("Agrega código para nueva variable (ej. df['nueva'] = df['col1'] * df['col2'])")
     if st.button("Ejecutar código"):
         try:
@@ -83,7 +83,7 @@ if uploaded_file:
             st.error(f"❌ Error: {e}")
 
     # Escalado
-    st.markdown("### 📏 Escalado de variables")
+    st.markdown("### Escalado de variables")
     cols_escalar = st.multiselect("Selecciona columnas para escalar", df.select_dtypes(include=['float64', 'int64']).columns)
     if st.checkbox("Aplicar escalado"):
         scaler = StandardScaler()
@@ -93,7 +93,7 @@ if uploaded_file:
         st.success("✔️ Escalado aplicado.")
 
     # Dummies
-    st.markdown("### 🏷 Conversión a dummies")
+    st.markdown("### Conversión a dummies")
     categ_cols = df.select_dtypes(include='object').columns.tolist()
     cols_dummies = st.multiselect("Selecciona columnas categóricas para dummies", categ_cols)
     if cols_dummies:
@@ -101,7 +101,7 @@ if uploaded_file:
         st.success("✔️ Dummies generadas.")
 
     # Selección de características
-    st.markdown("### 🧠 Selección de características")
+    st.markdown("### Selección de características")
     metodo = st.selectbox("Método de selección", ['correlacion', 'chi2', 'rfe'])
     target = st.selectbox("Selecciona la variable objetivo (target)", df.columns)
     k = st.slider("¿Cuántas características deseas seleccionar?", 1, 20, 10)
@@ -139,17 +139,17 @@ if uploaded_file:
         df = seleccionar_caracteristicas(df, metodo, k, target)
 
     # Matriz final
-    st.markdown("### 🔗 Correlación final")
+    st.markdown("### Correlación final")
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.heatmap(df.select_dtypes(include=['float64', 'int64']).corr(), annot=True, cmap='coolwarm', ax=ax)
     st.pyplot(fig)
 
     # Exportar
-    st.markdown("### 💾 Descargar DataFrame final")
-    st.download_button("📥 Descargar CSV", df.to_csv(index=False), "df_final.csv", "text/csv")
+    st.markdown("### Descargar DataFrame final")
+    st.download_button("Descargar CSV", df.to_csv(index=False), "df_final.csv", "text/csv")
 
 else:
-    st.info("🔄 Esperando archivo CSV...")
+    st.info("Esperando archivo CSV...")
 
 
 
