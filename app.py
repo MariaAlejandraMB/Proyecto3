@@ -8,7 +8,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 st.set_page_config(layout='wide')
-st.title("🔧 Dashboard Interactivo de Preprocesamiento - Olist Dataset")
+st.title("Dashboard Interactivo de Preprocesamiento")
 
 # Cargar archivo
 uploaded_file = st.sidebar.file_uploader("📁 Sube tu archivo CSV", type=["csv"])
