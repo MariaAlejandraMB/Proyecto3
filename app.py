@@ -30,16 +30,33 @@ if uploaded_file:
     st.dataframe(nulls[nulls > 0])
 
     # Imputación
-    st.markdown("### Imputación de valores nulos")
-    cols_with_nulls = df.columns[df.isnull().sum() > 0].tolist()
-    for col in cols_with_nulls:
-        method = st.selectbox(f"Imputar '{col}' con:", ["No imputar", "Media", "Mediana", "Moda"], key=col)
-        if method == "Media":
+# Imputación
+st.markdown("### Imputación de valores nulos")
+cols_with_nulls = df.columns[df.isnull().sum() > 0].tolist()
+
+for col in cols_with_nulls:
+    method = st.selectbox(f"Imputar '{col}' con:", ["No imputar", "Media", "Mediana", "Moda"], key=col)
+    if method == "Media":
+        if pd.api.types.is_numeric_dtype(df[col]):
             df[col].fillna(df[col].mean(), inplace=True)
-        elif method == "Mediana":
+        else:
+            st.warning(f"No se puede imputar '{col}' con la media (no es numérica).")
+    elif method == "Mediana":
+        if pd.api.types.is_numeric_dtype(df[col]):
             df[col].fillna(df[col].median(), inplace=True)
-        elif method == "Moda":
+        else:
+            st.warning(f"No se puede imputar '{col}' con la mediana (no es numérica).")
+    elif method == "Moda":
+        try:
             df[col].fillna(df[col].mode()[0], inplace=True)
+        except:
+            st.warning(f"No se pudo imputar '{col}' con moda.")
+
+# Mostrar tabla con valores nulos restantes
+st.markdown("### Verificación: Valores nulos restantes")
+nulls_restantes = df.isnull().sum()
+st.dataframe(nulls_restantes[nulls_restantes > 0] if nulls_restantes.sum() > 0 else pd.DataFrame({'✔️ No hay valores nulos restantes': []}))
+
 
     # Paso 3: Outliers
     st.markdown("### Outliers (IQR)")
